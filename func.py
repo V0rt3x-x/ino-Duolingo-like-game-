@@ -2,7 +2,7 @@ import sounddevice as sd
 import numpy as np
 import scipy.io.wavfile as wav
 import speech_recognition as sr
-import time, random
+import time, random, pyttsx3
 from googletrans import Translator
 
 duration = 5
@@ -30,6 +30,32 @@ words = {
     "C1": ["осознание", "пренебрежение", "уязвимость", "противоречие", "устойчивость", "двусмысленность", "предвзятость", "заблуждение", "сплоченность", "красноречие"],
     "C2": ["безупречность", "неизбежность", "мировоззрение", "кратковременность", "проницательность", "сострадание", "утонченность", "многогранность", "непредсказуемость", "самопожертвование"]
 }
+engine = pyttsx3.init()
+reply = None
+# RATE
+rate = engine.getProperty('rate')   # getting details of current speaking rate
+print (rate)                        # printing current voice rate
+engine.setProperty('rate', 125)     # setting up new voice rate
+
+# VOICE
+voices = engine.getProperty('voices')       # getting details of current voice
+milena_voice_id = None
+for voice in voices:
+    if "milena" in voice.name.lower():
+        milena_voice_id = voice.id
+        break
+if milena_voice_id:
+    engine.setProperty('voice', milena_voice_id)
+    print(f"Успешно установлен русский голос: Milena")
+else:
+    print("⚠ Голос Milena не найден, используется голос по умолчанию.")
+    engine.setProperty('voice', voices[0].id)
+#engine.setProperty('voice', voices[0].id)  # changing index, changes voices. 0 for male
+# engine.setProperty('voice', voices[1].id)   # changing index, changes voices. 1 for female
+
+# VOLUME
+volume = engine.getProperty('volume') # getting details of current volume
+engine.setProperty('volume', volume-0.5) # changing volume
 
 def recording(duration, sample_rate):
     print(40*"-", "🎙 Говори...", sep='\n')
@@ -90,10 +116,19 @@ def game():
     print(40*"-")
     # === Выбор уровня сложности ===
     print("👋 Приветствую тебя в нашей игре ino!")
+    engine.say("Приветствую тебя в нашей игре ino!")
+    engine.runAndWait()
+    engine.stop()
     time.sleep(1)
     print("💪 Здесь ты сможешь проверить знание языка!")
+    engine.say("Здесь ты сможешь проверить знание языка!")
+    engine.runAndWait()
+    engine.stop()
     time.sleep(1)
     print("🚀 Поехали!")
+    engine.say("Поехали!")
+    engine.runAndWait()
+    engine.stop()
     time.sleep(1)
 
     print(*codes, sep="\n")
@@ -102,11 +137,17 @@ def game():
     dest = input('🔀 Выберите код языка, знание которого хочешь проверить: en, es, pt, id, pl, it, tr: ')
     while dest not in codes2:
         print("⚠️ Код не найден, повторите попытку")
+        engine.say("Код не найден, повторите попытку")
+        engine.runAndWait()
+        engine.stop()
         dest = input('🔀 Выберите код языка, знание которого хочешь проверить: en, es, pt, id, pl, it, tr: ')
     time.sleep(0.5)
     level = input("✍️ Выбери уровень сложности: A1, A2, B1, B2, C1, C2: ").strip().upper()
     while level not in words:
         print("⚠️ Уровень не найден, повторите попытку")
+        engine.say("Уровень не найден, повторите попытку")
+        engine.runAndWait()
+        engine.stop()
         level = input("✍️ Выбери уровень сложности: A1, A2, B1, B2, C1, C2: ").strip().upper()
 
     word_list_by_level = words[level]
@@ -115,6 +156,9 @@ def game():
     random.shuffle(word_list_by_level)
 
     print("▶️ Ты увидишь слово на русском. Переведи его на выбранный язык за 5 секунд")
+    engine.say("Ты увидишь слово на русском. Переведи его на выбранный язык за 5 секунд")
+    engine.runAndWait
+    engine.stop
     time.sleep(1)
     print(" ")
 
